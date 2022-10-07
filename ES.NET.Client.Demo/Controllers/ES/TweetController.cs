@@ -36,11 +36,11 @@ public class TweetController : AreaController
     /// <param name="tweet"></param>
     /// <returns></returns>
     [HttpPut]
-    public async Task<IActionResult> IndexAsync(Tweet tweet)
+    public async Task<IActionResult> IndexAsync(Tweet entity)
     {
-        if (tweet == null || tweet.Id <= 0) return NoContent();
+        if (entity == null || entity.Id <= 0) return NoContent();
 
-        var response = await esClient.IndexAsync(tweet, request => request.Index(elasticSetting.IndexSetting.TweetIndex));
+        var response = await esClient.IndexAsync(entity, request => request.Index(elasticSetting.IndexSetting.TweetIndex));
 
         if (response.IsValid)
         {
@@ -53,15 +53,17 @@ public class TweetController : AreaController
     /// <summary>
     /// 获取文档
     /// </summary>
+    /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet]
-    public async Task<IActionResult> GetAsync()
+    public async Task<IActionResult> GetAsync(string id)
     {
-        var response = await esClient.GetAsync<Tweet>(1, idx => idx.Index(elasticSetting.IndexSetting.TweetIndex));
-        var tweet = response.Source;
+        var response = await esClient.GetAsync<Tweet>(id, idx => idx.Index(elasticSetting.IndexSetting.TweetIndex));
+        var entity = response.Source;
 
-        return Ok(tweet);
+        return Ok(entity);
     }
+
     /// <summary>
     /// 搜索文档(lambda方式)
     /// </summary>
@@ -89,6 +91,7 @@ public class TweetController : AreaController
             return NotFound();
         }
     }
+
     /// <summary>
     /// 搜索文档(实体对象方式)
     /// </summary>
@@ -107,26 +110,27 @@ public class TweetController : AreaController
 
         if (response.IsValid)
         {
-            var tweet = response.Documents.FirstOrDefault();
-            return Ok(tweet);
+            var entity = response.Documents.FirstOrDefault();
+            return Ok(entity);
         }
         else
         {
             return NotFound();
         }
     }
+
     /// <summary>
     /// 更新文档
     /// </summary>
-    /// <param name="tweet"></param>
+    /// <param name="entity"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> UpdateAsync(Tweet tweet)
+    public async Task<IActionResult> UpdateAsync(Tweet entity)
     {
-        if (tweet == null || tweet.Id <= 0) return NoContent();
+        if (entity == null || entity.Id <= 0) return NoContent();
 
-        var response = await esClient.UpdateAsync<Tweet, object>(elasticSetting.IndexSetting.TweetIndex, 1, u => u
-         .Doc(tweet));
+        var response = await esClient.UpdateAsync<Tweet, object>(elasticSetting.IndexSetting.TweetIndex, entity.Id.ToString(), u => u
+         .Doc(entity));
 
         if (response.IsValid)
         {
@@ -153,4 +157,5 @@ public class TweetController : AreaController
         }
         return Ok(response);
     }
+
 }

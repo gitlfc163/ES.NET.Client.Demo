@@ -1,6 +1,9 @@
 using ES.NET.Client.Demo.Models;
 using ES.NET.Client.Demo.Services;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using System;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "API±ÍÃ‚",
+        Description = "API√Ë ˆ"
+    });
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 var appSetting = new AppSetting();
 builder.Configuration.GetSection("AppSetting").Bind(appSetting);

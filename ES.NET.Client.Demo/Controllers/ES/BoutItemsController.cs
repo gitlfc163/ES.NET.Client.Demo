@@ -52,11 +52,12 @@ public class BoutItemsController : AreaController
     /// <summary>
     /// 获取文档
     /// </summary>
+    /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet]
-    public async Task<IActionResult> GetAsync()
+    public async Task<IActionResult> GetAsync(string id)
     {
-        var response = await esClient.GetAsync<BoutItems>(1, idx => idx.Index(elasticSetting.IndexSetting.BOutIndex));
+        var response = await esClient.GetAsync<BoutItems>(id, idx => idx.Index(elasticSetting.IndexSetting.BOutIndex));
         var entity = response.Source;
 
         return Ok(entity);
@@ -124,7 +125,7 @@ public class BoutItemsController : AreaController
     {
         if (entity == null || entity.Id <= 0) return NoContent();
 
-        var response = await esClient.UpdateAsync<BoutItems, object>(elasticSetting.IndexSetting.BOutIndex, 1, u => u
+        var response = await esClient.UpdateAsync<BoutItems, object>(elasticSetting.IndexSetting.BOutIndex, entity.Id.ToString(), u => u
          .Doc(entity));
 
         if (response.IsValid)
