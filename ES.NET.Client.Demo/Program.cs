@@ -17,7 +17,7 @@ builder.Configuration.GetSection("AppSetting").Bind(appSetting);
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 
 //[FromServices] ESClientConnHelp esClientConnHelp
-builder.Services.AddScoped<IESClientConnHelp,ESClientConnHelp>();
+builder.Services.AddScoped<IElasticSearchHelper,ElasticSearchHelper>();
 
 var app = builder.Build();
 

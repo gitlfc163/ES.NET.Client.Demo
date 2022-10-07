@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 namespace ES.NET.Client.Demo.Services;
 
 
-public class ESClientConnHelp: IESClientConnHelp
+public class ElasticSearchHelper: IElasticSearchHelper
 {
     //ES连接
 
@@ -15,7 +15,7 @@ public class ESClientConnHelp: IESClientConnHelp
     /// builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
     /// </summary>
     /// <param name="options"></param>
-    public ESClientConnHelp(IOptionsSnapshot<AppSetting> options)
+    public ElasticSearchHelper(IOptionsSnapshot<AppSetting> options)
     {
         if (options == null || options.Value == null)
             throw new ArgumentNullException(nameof(options));
